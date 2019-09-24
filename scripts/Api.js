@@ -1,4 +1,4 @@
-import {userNameElement, userAboutElement, userAvatarElement} from './variables'
+import {userNameElement, userAboutElement, userAvatarElement, selfForm} from './variables'
 import {Cardlist} from './Cardlist'
 export class Api {
   constructor(options) {
@@ -18,10 +18,6 @@ export class Api {
         return Promise.reject(`Ошибка: ${res.status}`);
       })
       .then(result => {
-        console.log(result);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
         userNameElement.textContent = result.name;
         userAboutElement.textContent = result.about;
         userAvatarElement.setAttribute('style', `background-image: url(${result.avatar})`);
@@ -29,16 +25,6 @@ export class Api {
       .catch(err => {
         console.log(err);
       });
-    /* Хорошо:
-    * Фетч работает корректно:
-    * - Создан отдельный метод в классе Api
-    *
-    * - Работа с DOM описана внутри цепочки промисов
-    *
-    * - Присутствуют все обязательные блоки в фетче.
-    *
-    * - Работа не вызывает ошибок.
-    * */
   }
 
   getInitialCards() {
@@ -53,24 +39,10 @@ export class Api {
       })
       .then((data) => {
         new Cardlist(document.querySelector('.places-list'), data);
-        console.log(data);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
     })
       .catch(err => {
         console.log(err);
       });
-    /* Хорошо:
-    * Фетч работает корректно:
-    * - Создан отдельный метод в классе Api
-    *
-    * - Работа с DOM описана внутри цепочки промисов
-    *
-    * - Присутствуют все обязательные блоки в фетче.
-    *
-    * - Работа не вызывает ошибок.
-    * */
   }
 
   editInfoAboutSelf(newInfo) {
@@ -94,24 +66,9 @@ export class Api {
 
         name.textContent = selfForm.name.value;
         about.textContent = selfForm.about.value;
-        console.log(data);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
       })
       .catch(err => {
         console.log(err);
       });
-      /* Хорошо:
-      * Фетч работает корректно:
-      * - Создан отдельный метод в классе Api
-      *
-      * - Работа с DOM описана внутри цепочки промисов
-      *
-      * - Присутствуют все обязательные блоки в фетче.
-      *
-      * - Работа не вызывает ошибок.
-      * */
-
   }
 }

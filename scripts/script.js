@@ -14,91 +14,11 @@
 /* Данные вопросы необходимо задавать наставнику,
 * но не при отправке работы на проверку.
 * */
-
-
-
 /* Классы */
-
-class Card {
-  constructor(name, link) {
-    this.cardElement = this.create(name, link);
-    this.like = this.like.bind(this);
-    this.remove = this.remove.bind(this);
-    this.cardElement.querySelector('.place-card__like-icon').addEventListener('click', this.like);
-    this.cardElement.querySelector('.place-card__delete-icon').addEventListener('click', this.remove);
-    this.cardElement.querySelector('.open').addEventListener('click', ()=> {openImagePopup.open(event)});
-  }
-
-  like(event) {
-    event.target.classList.toggle('place-card__like-icon_liked');
-  }
-
-  remove(event) {
-      const card = event.target.parentNode.parentNode;
-      card.parentNode.removeChild(card);
-  }
-
-  create(nameValue, linkValue) {
-    const placeCard = document.createElement('div');
-    placeCard.classList.add('place-card');
-    const placeCardImage = document.createElement('div');
-    placeCardImage.classList.add('place-card__image');
-    const image = document.createElement('img');
-    image.classList.add('place-card__image');
-    image.classList.add('open');
-    image.setAttribute('src', `${linkValue}`);
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('place-card__delete-icon');
-    const placeDescription = document.createElement('div');
-    placeDescription.classList.add('place-card__description');
-    const placeTitle = document.createElement('h3');
-    placeTitle.classList.add('place-card__name');
-    placeTitle.textContent = nameValue;
-    const likeButton = document.createElement('button');
-    likeButton.classList.add('place-card__like-icon');
-
-    placeCardImage.appendChild(image);
-    placeCardImage.appendChild(deleteButton);
-    placeDescription.appendChild(placeTitle);
-    placeDescription.appendChild(likeButton);
-    placeCard.appendChild(placeCardImage);
-    placeCard.appendChild(placeDescription);
-
-    return placeCard;
-  }
-}
-
-class Cardlist {
-  constructor(container, array) {
-    this.container = container;
-    this.cardList = array;
-    this.render();
-  }
-
-  addCard(name, link) {
-    const { cardElement } = new Card(name, link);
-
-    this.container.appendChild(cardElement);
-  }
-
-  render() {
-    this.cardList.forEach(element => {
-      this.addCard(element.name, element.link);
-    });
-  }
-}
-
-class Popup {
-  constructor(popupElement) {
-    this.element = popupElement;
-  }
-  open() {
-    this.element.classList.add('popup_is-opened');
-  }
-  close() {
-    this.element.classList.remove('popup_is-opened');
-  }
-}
+import {Card} from './Class'
+import {Cardlist} from './Class'
+import {Popup} from './Class'
+import {Api} from './Class'
 
 class AddCardPopup extends Popup {
   open() {
@@ -123,7 +43,6 @@ class AddCardPopup extends Popup {
     createForm.reset();
   }
 }
-
 class EditInfoPopup extends Popup {
   open() {
     super.open();
@@ -147,7 +66,6 @@ class EditInfoPopup extends Popup {
     }
   }
 }
-
 class ImagePopup extends Popup {
   open(event) {
     super.open();
@@ -156,155 +74,14 @@ class ImagePopup extends Popup {
   }
 }
 
-class Api {
-  constructor(options) {
-    this.api = options;
-    this.getInfoAboutSelf();
-    this.getInitialCards();
-  }
-
-  getInfoAboutSelf() {
-    fetch(`${this.api.baseUrl}/users/me`, {
-      headers: this.api.headers
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-      })
-      .then(result => {
-        console.log(result);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
-        userNameElement.textContent = result.name;
-        userAboutElement.textContent = result.about;
-        userAvatarElement.setAttribute('style', `background-image: url(${result.avatar})`);
-    })
-      .catch(err => {
-        console.log(err);
-      });
-    /* Хорошо:
-    * Фетч работает корректно:
-    * - Создан отдельный метод в классе Api
-    *
-    * - Работа с DOM описана внутри цепочки промисов
-    *
-    * - Присутствуют все обязательные блоки в фетче.
-    *
-    * - Работа не вызывает ошибок.
-    * */
-  }
-
-  getInitialCards() {
-    fetch(`${this.api.baseUrl}/cards`, {
-      headers: this.api.headers
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-      })
-      .then((data) => {
-        new Cardlist(document.querySelector('.places-list'), data);
-        console.log(data);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
-    })
-      .catch(err => {
-        console.log(err);
-      });
-    /* Хорошо:
-    * Фетч работает корректно:
-    * - Создан отдельный метод в классе Api
-    *
-    * - Работа с DOM описана внутри цепочки промисов
-    *
-    * - Присутствуют все обязательные блоки в фетче.
-    *
-    * - Работа не вызывает ошибок.
-    * */
-  }
-
-  editInfoAboutSelf(newInfo) {
-    return fetch(`${this.api.baseUrl}/users/me`, {
-      method: 'PATCH',
-      headers: this.api.headers,
-      body: JSON.stringify({
-          name: newInfo.name,
-          about: newInfo.about
-      })
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-      })
-      .then((data) => {
-        const name = document.querySelector('.user-info__name');
-        const about = document.querySelector('.user-info__job');
-
-        name.textContent = selfForm.name.value;
-        about.textContent = selfForm.about.value;
-        console.log(data);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
-      })
-      .catch(err => {
-        console.log(err);
-      });
-      /* Хорошо:
-      * Фетч работает корректно:
-      * - Создан отдельный метод в классе Api
-      *
-      * - Работа с DOM описана внутри цепочки промисов
-      *
-      * - Присутствуют все обязательные блоки в фетче.
-      *
-      * - Работа не вызывает ошибок.
-      * */
-
-  }
-
-
-}
-
 /* Переменные */
-
-const initialCards = [];
-
-const popupAdd = document.querySelector('#popup-add');
+import {serverUrl, popupAdd, popupAddOpenButton, popupAddCloseButton, popupAddButton, popupEdit, popupEditOpenButton, popupEditCloseButton, editSaveButton, popupImage, popupImageCloseButton, createForm, selfForm, userNameElement, userAboutElement, userAvatarElement} from './variables'
 const addCardPopup = new AddCardPopup(popupAdd);
-const popupAddOpenButton = document.querySelector('.user-info__button');
-const popupAddCloseButton = popupAdd.querySelector('.popup__close');
-const popupAddButton = popupAdd.querySelector('.popup__button');
-
-const popupEdit = document.querySelector('#popup-edit');
 const editInfoPopup = new EditInfoPopup(popupEdit);
-const popupEditOpenButton = document.querySelector('.user-button__edit');
-const popupEditCloseButton = popupEdit.querySelector('.popup__close');
-const editSaveButton = popupEdit.querySelector('.popup__button');
-
-const popupImage = document.querySelector('#popup-image');
 const openImagePopup = new ImagePopup(popupImage);
-const popupImageCloseButton = popupImage.querySelector('.popup__close');
-
-const createForm = document.forms.new;
-const selfForm = document.forms.self;
-
-
-const userNameElement = document.querySelector('.user-info__name');
-const userAboutElement = document.querySelector('.user-info__job');
-const userAvatarElement = document.querySelector('.user-info__photo');
-
 
 const api = new Api({
-  baseUrl: 'http://95.216.175.5/cohort2',
+  baseUrl: serverUrl,
   headers: {
     authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d',
     'Content-Type': 'application/json'
@@ -317,76 +94,76 @@ const api = new Api({
 
 
 
-fetch('http://95.216.175.5/cohort2/cards', {
-  headers: {
-  authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d'
-}
-})
-  .then(res => res.json())
-  .then(result => {
-    console.log(result[94])
-});
+// fetch('http://95.216.175.5/cohort2/cards', {
+//   headers: {
+//   authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d'
+// }
+// })
+//   .then(res => res.json())
+//   .then(result => {
+//     console.log(result[94])
+// });
 
-/* Надо исправить:
-* Не совсем понятный фетч, зачем он оставлен в коде и, если необходим, почему не вынесен в класс Api.
-*
-* */
-
-
+// /* Надо исправить:
+// * Не совсем понятный фетч, зачем он оставлен в коде и, если необходим, почему не вынесен в класс Api.
+// *
+// * */
 
 
-function addCar(newCard) {
-
-  return fetch('http://95.216.175.5/cohort2/cards' , {
-    method: 'POST',
-    headers: {
-      authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      name: newCard.name,
-      link: newCard.link
-    })
-  })
-    .then(res => res.json())
-    .then((data) => {
-      console.log(data);
-    })
-  /* Надо исправить:
-  * Fetch должен быть описан внутри класса Api.
-  * Отсутствует работа с res в первом .then - нет проверки res.ok и возврата Promise.reject в том случае, если статус некорректнен.
-  *
-  * Работа с DOM (неподсрественное добавление карточки) должны выполняться внутри цепочки промисов, во-первых:
-  * Это не допустит добавления карточки в том случае, если ответ с сервера не пришел
-  *
-  * Второе:
-  * Сервер в данном случае возвращает result, содержащий объект новой карточки - в ней есть owner.id, result.id.
-  *
-  * На данный момент код не работает, карточка появляется после обновления страницы
-  * */
-
-}
 
 
-function deleteCard(id) {
+// function addCar(newCard) {
 
-  return fetch(`http://95.216.175.5/cohort2/cards/${id}` , {
-    method: 'DELETE',
-    headers: {
-      authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d',
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(res => res.json())
-    .then((data) => {
-      console.log(data);
-    })
-  /* Надо исправить:
-  * Fetch не вынесен в класс Api
-  *
-  * Работа с DOM должна происходить внутри цепочки промисов.
-  * */
-}
+//   return fetch('http://95.216.175.5/cohort2/cards' , {
+//     method: 'POST',
+//     headers: {
+//       authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d',
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//       name: newCard.name,
+//       link: newCard.link
+//     })
+//   })
+//     .then(res => res.json())
+//     .then((data) => {
+//       console.log(data);
+//     })
+//   /* Надо исправить:
+//   * Fetch должен быть описан внутри класса Api.
+//   * Отсутствует работа с res в первом .then - нет проверки res.ok и возврата Promise.reject в том случае, если статус некорректнен.
+//   *
+//   * Работа с DOM (неподсрественное добавление карточки) должны выполняться внутри цепочки промисов, во-первых:
+//   * Это не допустит добавления карточки в том случае, если ответ с сервера не пришел
+//   *
+//   * Второе:
+//   * Сервер в данном случае возвращает result, содержащий объект новой карточки - в ней есть owner.id, result.id.
+//   *
+//   * На данный момент код не работает, карточка появляется после обновления страницы
+//   * */
+
+// }
+
+
+// function deleteCard(id) {
+
+//   return fetch(`http://95.216.175.5/cohort2/cards/${id}` , {
+//     method: 'DELETE',
+//     headers: {
+//       authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d',
+//       'Content-Type': 'application/json'
+//     }
+//   })
+//     .then(res => res.json())
+//     .then((data) => {
+//       console.log(data);
+//     })
+//   /* Надо исправить:
+//   * Fetch не вынесен в класс Api
+//   *
+//   * Работа с DOM должна происходить внутри цепочки промисов.
+//   * */
+// }
 
 
 function renderLoading(isLoading) {

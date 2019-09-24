@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/jorianp/project11/issues"
   },
-  "homepage": "https://github.com/jorianp/project11#readme",
+  "homepage": "https://jorianp.github.io/project11",
   "devDependencies": {
     "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",

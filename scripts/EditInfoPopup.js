@@ -1,3 +1,4 @@
+import {selfForm, editSaveButton} from './variables'
 import {Popup} from './Popup'
 export class EditInfoPopup extends Popup {
   open() {

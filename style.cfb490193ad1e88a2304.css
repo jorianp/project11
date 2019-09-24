@@ -413,7 +413,7 @@ template {
   border-radius: 50%;
   background-size: cover;
   background-position: center;
-  background-image: url(./dist/images/avatar.jpg);
+  background-image: url(./images/avatar.jpg);
 }
 
 @media screen and (max-width: 980px) {
@@ -539,7 +539,7 @@ template {
   cursor: pointer;
 }
 .place-card__delete-icon {
-  background: url(./dist/images/trash-icon.svg) center no-repeat;
+  background: url(./images/trash-icon.svg) center no-repeat;
   background-color: transparent;
   border: none;
   width: 18px;
@@ -574,7 +574,7 @@ template {
 }
 
 .place-card__like-icon {
-  background: url(./dist/images/like-inactive.svg) center no-repeat;
+  background: url(./images/like-inactive.svg) center no-repeat;
   background-color: transparent;
   border: none;
   width: 21px;
@@ -585,7 +585,7 @@ template {
 }
 
 .place-card__like-icon_liked {
-  background-image: url(./dist/images/like-active.svg);
+  background-image: url(./images/like-active.svg);
 }
 
 .place-card__like-icon:hover {

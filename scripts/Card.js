@@ -1,3 +1,6 @@
+import {Popup} from './Popup'
+import {ImagePopup} from './ImagePopup'
+import {openImagePopup} from './script'
 export class Card {
   constructor(name, link) {
     this.cardElement = this.create(name, link);

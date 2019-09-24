@@ -46,35 +46,3 @@ export class Card {
     return placeCard;
   }
 }
-
-export class Cardlist {
-  constructor(container, array) {
-    this.container = container;
-    this.cardList = array;
-    this.render();
-  }
-
-  addCard(name, link) {
-    const { cardElement } = new Card(name, link);
-
-    this.container.appendChild(cardElement);
-  }
-
-  render() {
-    this.cardList.forEach(element => {
-      this.addCard(element.name, element.link);
-    });
-  }
-}
-
-export class Popup {
-  constructor(popupElement) {
-    this.element = popupElement;
-  }
-  open() {
-    this.element.classList.add('popup_is-opened');
-  }
-  close() {
-    this.element.classList.remove('popup_is-opened');
-  }
-}

@@ -15,182 +15,17 @@
 * но не при отправке работы на проверку.
 * */
 /* Классы */
-import {Card} from './Class'
-import {Cardlist} from './Class'
-import {Popup} from './Class'
-
-class AddCardPopup extends Popup {
-  open() {
-    super.open();
-    const errorName = createForm.querySelector('#spanName');
-    const errorLink = createForm.querySelector('#spanLink');
-
-    errorName.classList.remove('popup__input_error-visible');
-    errorLink.classList.remove('popup__input_error-visible');
-
-    if (createForm.elements.name.value.length === 0 || createForm.elements.link.value.length === 0) {
-      popupAddButton.setAttribute('disabled', true);
-      popupAddButton.classList.add('popup__button_disabled');
-    } else {
-      popupAddButton.removeAttribute('disabled');
-      popupAddButton.classList.remove('popup__button_disabled');
-    }
-  }
-
-  close(){
-    super.close();
-    createForm.reset();
-  }
-}
-class EditInfoPopup extends Popup {
-  open() {
-    super.open();
-    const userName = document.querySelector('.user-info__name').textContent;
-    const userAbout = document.querySelector('.user-info__job').textContent;
-    const errorName = selfForm.querySelector('#spanName');
-    const errorAbout = selfForm.querySelector('#spanAbout');
-
-    errorName.classList.remove('popup__input_error-visible');
-    errorAbout.classList.remove('popup__input_error-visible');
-
-    selfForm.elements.name.value = userName;
-    selfForm.elements.about.value = userAbout;
-
-    if (selfForm.elements.name.value.length === 0 || selfForm.elements.about.value.length === 0) {
-      editSaveButton.setAttribute('disabled', true);
-      editSaveButton.classList.add('popup__button_disabled');
-    } else {
-      editSaveButton.removeAttribute('disabled');
-      editSaveButton.classList.remove('popup__button_disabled');
-    }
-  }
-}
-class ImagePopup extends Popup {
-  open(event) {
-    super.open();
-    const image = popupImage.querySelector('.popup__image');
-    image.setAttribute('src', `${event.target.getAttribute('src')}`);
-  }
-}
-
-class Api {
-  constructor(options) {
-    this.api = options;
-    this.getInfoAboutSelf();
-    this.getInitialCards();
-  }
-
-  getInfoAboutSelf() {
-    fetch(`${this.api.baseUrl}/users/me`, {
-      headers: this.api.headers
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-      })
-      .then(result => {
-        console.log(result);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
-        userNameElement.textContent = result.name;
-        userAboutElement.textContent = result.about;
-        userAvatarElement.setAttribute('style', `background-image: url(${result.avatar})`);
-    })
-      .catch(err => {
-        console.log(err);
-      });
-    /* Хорошо:
-    * Фетч работает корректно:
-    * - Создан отдельный метод в классе Api
-    *
-    * - Работа с DOM описана внутри цепочки промисов
-    *
-    * - Присутствуют все обязательные блоки в фетче.
-    *
-    * - Работа не вызывает ошибок.
-    * */
-  }
-
-  getInitialCards() {
-    fetch(`${this.api.baseUrl}/cards`, {
-      headers: this.api.headers
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-      })
-      .then((data) => {
-        new Cardlist(document.querySelector('.places-list'), data);
-        console.log(data);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
-    })
-      .catch(err => {
-        console.log(err);
-      });
-    /* Хорошо:
-    * Фетч работает корректно:
-    * - Создан отдельный метод в классе Api
-    *
-    * - Работа с DOM описана внутри цепочки промисов
-    *
-    * - Присутствуют все обязательные блоки в фетче.
-    *
-    * - Работа не вызывает ошибок.
-    * */
-  }
-
-  editInfoAboutSelf(newInfo) {
-    return fetch(`${this.api.baseUrl}/users/me`, {
-      method: 'PATCH',
-      headers: this.api.headers,
-      body: JSON.stringify({
-          name: newInfo.name,
-          about: newInfo.about
-      })
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        return Promise.reject(`Ошибка: ${res.status}`);
-      })
-      .then((data) => {
-        const name = document.querySelector('.user-info__name');
-        const about = document.querySelector('.user-info__job');
-
-        name.textContent = selfForm.name.value;
-        about.textContent = selfForm.about.value;
-        console.log(data);
-        /* Можно лучше:
-        * Такие console.log'и лучше удалять своевременно.
-        * */
-      })
-      .catch(err => {
-        console.log(err);
-      });
-      /* Хорошо:
-      * Фетч работает корректно:
-      * - Создан отдельный метод в классе Api
-      *
-      * - Работа с DOM описана внутри цепочки промисов
-      *
-      * - Присутствуют все обязательные блоки в фетче.
-      *
-      * - Работа не вызывает ошибок.
-      * */
-
-  }
-}
+import {Card} from './Card'
+import {Cardlist} from './Cardlist'
+import {Popup} from './Popup'
+import {AddCardPopup} from './AddCardPopup'
+import {EditInfoPopup} from './EditInfoPopup'
+import {ImagePopup} from './ImagePopup'
+import {Api} from './Api'
 
 /* Переменные */
 import {serverUrl, popupAdd, popupAddOpenButton, popupAddCloseButton, popupAddButton, popupEdit, popupEditOpenButton, popupEditCloseButton, editSaveButton, popupImage, popupImageCloseButton, createForm, selfForm, userNameElement, userAboutElement, userAvatarElement} from './variables'
+
 const addCardPopup = new AddCardPopup(popupAdd);
 const editInfoPopup = new EditInfoPopup(popupEdit);
 const openImagePopup = new ImagePopup(popupImage);
@@ -202,8 +37,6 @@ const api = new Api({
     'Content-Type': 'application/json'
   }
 });
-
-
 
 
 

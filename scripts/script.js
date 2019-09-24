@@ -25,7 +25,7 @@ const api = new Api({
 
 function addCar(newCard) {
 
-  return fetch('http://95.216.175.5/cohort2/cards' , {
+  return fetch(`${serverUrl}/cards` , {
     method: 'POST',
     headers: {
       authorization: '11c39413-36e2-46e6-97d4-5aee37cd6c1d',

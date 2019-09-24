@@ -29,6 +29,7 @@ import {serverUrl, popupAdd, popupAddOpenButton, popupAddCloseButton, popupAddBu
 const addCardPopup = new AddCardPopup(popupAdd);
 const editInfoPopup = new EditInfoPopup(popupEdit);
 export const openImagePopup = new ImagePopup(popupImage);
+const openImagePopup = new ImagePopup(popupImage);
 
 const api = new Api({
   baseUrl: serverUrl,
